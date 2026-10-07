@@ -2,3 +2,4 @@ data/snapshots/
 data/index/
 __pycache__/
 .pytest_cache/
+.env
