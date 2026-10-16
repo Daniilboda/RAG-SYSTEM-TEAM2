@@ -14,7 +14,6 @@ sys.path.insert(0, str(ROOT / "packages"))
 sys.path.insert(0, str(ROOT))
 
 from rag_common.embeddings import get_embedder
-from retrieve import _client, retrieve
 
 MODEL_NAME = "Qwen/Qwen2.5-0.5B-Instruct"
 ANSWER_K = 3
@@ -106,6 +105,8 @@ def main() -> None:
     query = " ".join(sys.argv[1:]).strip()
     if not query:
         query = input("Запрос: ").strip()
+    from retrieve import _client, retrieve
+
     hits = retrieve(query, _client(), get_embedder(), limit=ANSWER_K)
     if not hits:
         print("Ничего не найдено.")

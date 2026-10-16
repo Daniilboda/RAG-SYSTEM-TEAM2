@@ -1,0 +1,12 @@
+services:
+  build:
+    build: .
+    image: rag-system-check
+    command: ["python", "docker/build_project.py"]
+    volumes:
+      - huggingface:/cache/huggingface
+      - ./data/snapshots:/app/data/snapshots
+      - ./data/index:/app/data/index
+
+volumes:
+  huggingface:
