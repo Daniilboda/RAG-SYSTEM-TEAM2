@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "docling/docling_10.jsonl": true,
+    "docs/docling_pdf_10": true,
+    "docs/docling_md_10": true,
+    "docs/ROMA_DOCLING": true
+  }
+}

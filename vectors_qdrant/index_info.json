@@ -1,0 +1,14 @@
+{
+  "collection": "rudn_chunks_v1",
+  "snapshot_id": "stipendii_lp_v1",
+  "chunker": "stipendii-sections+recursive/v1/512/64",
+  "strategy": "md_header",
+  "max_tokens": 512,
+  "overlap_tokens": 64,
+  "min_tokens": 24,
+  "embedding_model": "BAAI/bge-m3",
+  "embedding_model_revision": "5617a9f61b028005a4858fdac845db406aefb181",
+  "document_count": 22,
+  "chunk_count": 964,
+  "created_at": "2026-10-29T21:38:58Z"
+}

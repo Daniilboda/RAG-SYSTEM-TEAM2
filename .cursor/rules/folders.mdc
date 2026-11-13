@@ -1,0 +1,84 @@
+---
+description: Схема папок всего репозитория RAG SYSTEM (без деталей внутри multidoc2dial)
+alwaysApply: false
+---
+
+# Схема папок репозитория
+
+Актуальная карта **корня** проекта и контуров верхнего уровня. Внутренности `multidoc2dial/` здесь **не** дублируем — см. `multidoc2dial/docs/folders.md`.
+
+## Как обновлять
+
+- Изменения в корне, `.cursor/`, `docs/`, `docling/` или новых контурах рядом с `multidoc2dial/` → обнови **этот** файл.
+- Изменения **внутри** `multidoc2dial/` → обнови только `multidoc2dial/docs/folders.md` (этот файл не трогай, кроме строки-ссылки на контур, если переименуют саму папку).
+- В схеме: путь и одна строка, зачем он нужен. Не оставляй схему старее проекта.
+
+## Дерево репозитория
+
+```text
+.git/            локальная история Git и связь с GitHub
+.cursor/         правила Cursor и спеки; в multidoc2dial не переносится
+  rules/folders.mdc   схема папок корня репозитория (этот файл)
+  rules/chat_multidoc2dial.mdc   диалог и статусы шагов для multidoc2dial/**
+  rules/update-folders.mdc   always-on: не забывать обновлять схемы папок
+  rules/TEAM_TASKS.md   полная спека проекта
+  rules/TEAM_TASKS_SIMPLE.mdc   простые карточки задач для участников
+  rules/TEAM_TASKS.html   HTML со встроенными схемами
+  rules/OPENPROJECT_AI_AGENT.md   инструкция агенту по OpenProject
+  rules/OpenProject_RUDN_Gemini_voice.md   расшифровка урока OpenProject
+.gitignore       в корне: .env и локальные кэши Python
+.cursorignore    исключения индекса Cursor (пилот stipendii_10 и др.)
+.vscode/         settings.json: files.exclude — скрытие в дереве файлов
+.env             запасной/корневой env (рабочий для mdd — в multidoc2dial/.env)
+docling/         этап A: convert_stipendii.py, table_repair.py, postprocess_md.py (чистка Docling-MD); _deep_qa_rest.py — доп. сверка; docling.jsonl — манифест 22 док.; md_pdf_qa_report.md — QA PDF↔md
+  docling_10.jsonl   [скрыто] пилотный манифест 10 док.; см. «Скрытые»
+llama_parse/     контур LlamaParse: сырой и очищенный markdown стипендийного корпуса
+  postprocess_md.py            чистка СЭД/ЭП-шума в MD от LlamaParse
+  build_manifest.py            сборка manifest.jsonl из clean MD + PDF
+  manifest.jsonl               описи 22 док. (doc_id, md/pdf paths, content_hash)
+  qa_clean_round1.md           QA глазами+автофлаги по llama_parse_md_clean (2026-10-29)
+  llama_parse_md/              сырой MD после LlamaParse (22 док. на верхнем уровне)
+  llama_parse_md/Mira-web-parse/   веб-парс (пакетный postprocess не трогает)
+  llama_parse_md_clean/        рабочий MD корпуса стипендий (после postprocess); ADR docs/adr/pre-stipendii-md-source.md
+
+rudn_corpus/     растущий корпус РУДН в формате multidoc2dial_doc (doc_data[domain][doc_id])
+  rudn_doc.json                основной JSON: домены, doc_text, spans/tables (редактируется регулярно)
+  build_stipendii_from_llamaparse.py   заливка/обновление domain=stipendii из LP clean
+  fill_spans.py                авторазметка spans/tables по MD (заголовки, пункты, таблицы)
+  build_k1_snapshot.py         адаптер корпуса → K1 snapshot_k1/stipendii_lp_v1/
+
+json_spans/      этап B (старый ярлык): дальше логика корпуса — в rudn_corpus/
+snapshot_k1/     этап C: снимки K1 (pages, structure, manifest, passport, reports)
+  stipendii_lp_v1/             снимок 22 стипендийных доков из rudn_doc.json (2026-10-30)
+chunking/        этап D: нарезка фрагментов из K1
+  stipendii_sections_512.yaml  конфиг: max=512, overlap=64, min=24, bge-m3
+  run_chunk.py                 прогон write_chunks + check_chunks по stipendii_lp_v1
+  chunks.jsonl                 964 фрагмента (K2) из снимка stipendii_lp_v1
+vectors_qdrant/  этап E: векторы и индекс Qdrant
+  run_embed.py                 bge-m3: chunks.jsonl → vectors.jsonl
+  run_index.py                 создать/залить коллекцию rudn_chunks_v1
+  vectors.jsonl                плотный 1024 + sparse на каждый chunk_id
+  index_info.json              паспорт коллекции rudn_chunks_v1 (964 точки)
+docs/            общие материалы репозитория вне контура mdd
+  adr/           ADR решений (в т.ч. pre-stipendii-md-source.md — источник MD стипендий)
+  docling_pdf/   22 PDF стипендий/приказов — полный корпус для TSK-PRE-EXP-01
+  docling_md/    Markdown после Docling (архив/сравнение; не основной — см. ADR)
+  docling_pdf_10/  [скрыто] пилот 10 PDF; см. «Скрытые»
+  docling_md_10/   [скрыто] пилот 10 Markdown; см. «Скрытые»
+  ROMA_DOCLING/  [скрыто] копия ROMA_DOCLING_PDF_V1; md уже в docling_md/; см. «Скрытые»
+  rudn_stipendii_10_pipeline.xlsx   трекер 5 этапов пайплайна стипендий
+multidoc2dial/   рабочий контур MultiDoc2Dial (mdd); структура внутри — multidoc2dial/docs/folders.md
+```
+
+## Скрытые папки
+
+Часть скрыта в дереве Cursor/VS Code (`files.exclude` в `.vscode/settings.json`) и в индексе агента (`.cursorignore`). На диске остаются. Кэши Python — ещё и в `.gitignore`. Для mdd: `multidoc2dial/docs/hidden-folders.md`.
+
+| Папка / файл | Кто создаёт | Зачем / статус |
+| --- | --- | --- |
+| `__pycache__` | Python при импорте модуля | Разобранный код `.pyc` |
+| `.pytest_cache` | pytest после прогона тестов | Память о прошлых тестах (`pytest --lf`) |
+| `docling/docling_10.jsonl` | пилот stipendii_10 | **Скрыто.** Устаревший манифест 10 док.; актуальный — `docling/docling.jsonl` (22) |
+| `docs/docling_pdf_10/` | пилот stipendii_10 | **Скрыто.** Первые 10 PDF; полный корпус — `docs/docling_pdf/` |
+| `docs/docling_md_10/` | пилот stipendii_10 | **Скрыто.** 10 md пилота; полный корпус — `docs/docling_md/` |
+| `docs/ROMA_DOCLING/` | копия ветки Ромы | **Скрыто.** Дубликат md (источник `roma_docling_pdf_v1`); рабочие файлы — в `docs/docling_md/` + `docling/docling.jsonl` |
