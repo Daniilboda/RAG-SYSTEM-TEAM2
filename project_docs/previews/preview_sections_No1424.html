@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>No1424 — как fill_spans делит на секции</title>
+<style>
+  :root {
+    --h2: #1d4ed8;
+    --h3: #b45309;
+    --h4: #047857;
+    bg: #f8fafc;
+  }
+  body {
+    margin: 0;
+    font: 16px/1.55 "Segoe UI", system-ui, sans-serif;
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+  .wrap { max-width: 920px; margin: 24px auto; padding: 0 16px 48px; }
+  h1.page { font-size: 1.25rem; margin: 0 0 8px; }
+  .note { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.95rem; }
+  .note code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
+  .legend span {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 999px; padding: 4px 10px; font-size: 0.85rem;
+  }
+  .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .sw.h2 { background: var(--h2); }
+  .sw.h3 { background: var(--h3); }
+  .sw.h4 { background: var(--h4); }
+
+  /* nested sections = real algorithm output */
+  .sec {
+    border: 3px solid;
+    border-radius: 10px;
+    padding: 10px 12px 12px;
+    background: #fff;
+    position: relative;
+  }
+  .sec.h2 { border-color: var(--h2); background: #eff6ff; }
+  .sec.h3 { border-color: var(--h3); background: #fffbeb; margin-top: 10px; }
+  .sec.h4 { border-color: var(--h4); background: #ecfdf5; margin-top: 10px; }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-bottom: 8px;
+  }
+  .badge.h2 { background: var(--h2); }
+  .badge.h3 { background: var(--h3); }
+  .badge.h4 { background: var(--h4); }
+  .why {
+    font-size: 0.82rem;
+    color: #334155;
+    margin: 0 0 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.7);
+    border-left: 3px solid #94a3b8;
+  }
+
+  .doc h2 { font-size: 1.05rem; margin: 0 0 0.6em; }
+  .doc h3 { font-size: 1.15rem; margin: 0 0 0.5em; }
+  .doc h4 { font-size: 1.05rem; margin: 0 0 0.5em; }
+  .doc p { margin: 0 0 0.75em; }
+  .doc ul { margin: 0.4em 0 0.8em; padding-left: 1.2em; }
+  .doc li { margin: 0.25em 0; }
+  .hl-head {
+    outline: 2px dashed currentColor;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .sec.h2 .hl-head { color: var(--h2); }
+  .sec.h3 .hl-head { color: var(--h3); }
+  .sec.h4 .hl-head { color: var(--h4); }
+  .tag {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    background: #0f172a; color: #fff; border-radius: 4px; padding: 1px 5px; margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page">Preview: No1424 — деление на секции как в <code>fill_spans</code></h1>
+  <div class="note">
+    Это <strong>тот же</strong> markdown, что в
+    <code>ready_to_corpus/No1424-r_ot_12.08.2026_Ob_ustanovlenii_normativo.md</code>,
+    но вложенными рамками показано, <em>какие диапазоны</em> алгоритм считает секциями.
+    Правило: секция заголовка <code>#</code> идёт до следующего заголовка
+    <strong>того же или выше уровня</strong>; если такого нет — до конца файла.
+  </div>
+  <div class="legend">
+    <span><i class="sw h2"></i> секция <code>h2-1</code></span>
+    <span><i class="sw h3"></i> секция <code>h3-2</code></span>
+    <span><i class="sw h4"></i> секция <code>h4-3</code></span>
+  </div>
+
+  <!-- ===== REAL STRUCTURE ===== -->
+  <div class="sec h2 doc">
+    <div class="badge h2">id_sec = h2-1 · символы 0…конец файла</div>
+    <p class="why"><strong>Почему:</strong> нашли <code>##</code>. Следующего <code>##</code> (или <code>#</code>) в файле нет → секция = <em>весь документ</em>.</p>
+
+    <h2 class="hl-head"><span class="tag">старт h2-1</span>Федеральное государственное автономное образовательное учреждение высшего образования «Российский университет дружбы народов имени Патриса Лумумбы» (РУДН)</h2>
+
+    <div class="sec h3">
+      <div class="badge h3">id_sec = h3-2 · отсюда до конца файла</div>
+      <p class="why"><strong>Почему:</strong> нашли <code>###</code>. Следующего <code>###</code> / <code>##</code> нет → снова до конца файла (внутри h2-1).</p>
+
+      <h3 class="hl-head"><span class="tag">старт h3-2</span>ПРИКАЗ</h3>
+      <p><strong>12.08.2026</strong> <strong>№ 1424-р</strong></p>
+      <p><strong>Москва</strong></p>
+
+      <div class="sec h4">
+        <div class="badge h4">id_sec = h4-3 · отсюда до конца файла</div>
+        <p class="why"><strong>Почему:</strong> нашли <code>####</code>. Следующего <code>####</code>+ нет → до конца. Пункты <code>1.</code>/<code>2.</code> и строки <code>*</code> — это не новые секции, а spans <em>внутри</em> h4-3.</p>
+
+        <h4 class="hl-head"><span class="tag">старт h4-3</span>Об установлении нормативов для стипендиальных выплат обучающимся РУДН с 1 сентября 2026 г. с учетом размера индексации 4 % к выплатам</h4>
+
+        <p>В соответствии с частью 1 ст. 1 и ст. 8 п. 4 (о величине прожиточного минимума на душу населения) Федерального закона от 28.11.2025 № 426-ФЗ «О федеральном бюджете на 2026 год и на плановый период 2027 и 2028 годов», постановлением Правительства РФ от 17.12.2016 № 1390 «О формировании стипендиального фонда», постановлением Правительства РФ от 15.08.2013 №707 «Об установлении размера стипендии, выплачиваемой слушателям подготовительных отделений федеральных государственных образовательных организаций высшего образования, обучающимся за счет бюджетных ассигнований федерального бюджета», письмом Минобрнауки России от 04.08.2026 № МН-11/1940 «О стипендиальном обеспечении с 1 сентября 2026 г.», протоколом № УС-11 от 11.09.2017</p>
+
+        <p><strong>ПРИКАЗЫВАЮ:</strong></p>
+
+        <p><span class="tag">clause</span>1. Установить с 1 сентября 2026 года следующие нормативы для стипендиальных выплат обучающимся университета за счет бюджетных ассигнований федерального бюджета:</p>
+        <ul>
+          <li><span class="tag">list</span>государственная академическая стипендия студентам, обучающимся по программе высшего образования (бакалавриата, специалитета, магистратуры) - 2400,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>государственная академическая стипендия студентам, обучающимся по программе высшего образования в повышенном размере (для обучающихся на «отлично») - 3500,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>государственная социальная стипендия студентам, обучающимся по программе высшего образования (бакалавриата, специалитета, магистратуры) - 4000,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>государственная социальная стипендия в повышенном размере … – 13 000,00 руб. в месяц;</li>
+          <li><span class="tag">list</span>… повышенном размере … до 20 лет … – 17 000,00 руб. в месяц;</li>
+          <li><span class="tag">list</span>… повышенная ГАС … – 10 000,00 руб. в месяц;</li>
+          <li><span class="tag">list</span>стипендия аспирантам … - 4800,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>стипендия аспирантам (направления Минобрнауки) - 10900,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>стипендия ординаторам - 11600,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>стипендии иностранным гражданам — слушателям ИРЯ - 2000,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>ГАС СПО - 840,00 рублей в месяц;</li>
+          <li><span class="tag">list</span>ГСС СПО - 1300,00 рублей в месяц.</li>
+        </ul>
+
+        <p><span class="tag">clause</span>2. Контроль за исполнением приказа возложить на проректора по работе со студентами М.И. Кацарского и главного бухгалтера А.В. Зорина.</p>
+
+        <p><strong>Ректор</strong></p>
+        <p><strong>О.А. Ястробов</strong></p>
+        <p>И.В. Ефремова<br />+7(495) 787-38-03, доб. 1189</p>
+        <p style="font-size:0.8rem;color:#047857;margin:0"><strong>← здесь заканчиваются сразу h4-3, h3-2 и h2-1</strong> (конец файла)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    Открой этот файл в браузере (или Simple Browser). Синяя / оранжевая / зелёная рамки —
+    это ровно три <code>id_sec</code> из JSON. Вложенность = перекрывающиеся диапазоны до EOF.
+  </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,5 @@
-# Hidden from Cursor index (superseded / duplicate sources)
-docling/docling_10.jsonl
-docs/docling_pdf_10/
-docs/docling_md_10/
-docs/ROMA_DOCLING/
+﻿# Hidden from Cursor index (superseded / duplicate sources)
+data_to_md/docling/docling_10.jsonl
+project_docs/docling_pdf_10/
+project_docs/docling_md_10/
+project_docs/ROMA_DOCLING/

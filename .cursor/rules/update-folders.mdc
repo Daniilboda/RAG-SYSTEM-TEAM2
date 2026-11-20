@@ -6,6 +6,6 @@ alwaysApply: true
 # Схема папок
 
 - Изменения **внутри** `multidoc2dial/` → обнови только `multidoc2dial/docs/folders.md`.
-- Изменения в корне репозитория, `.cursor/`, `docs/`, `docling/` или новых контурах → обнови `.cursor/rules/folders.mdc` (без детализации содержимого `multidoc2dial/`).
+- Изменения в корне репозитория, `.cursor/`, `project_docs/`, `data/`, `data_to_md/` или новых контурах → обнови `.cursor/rules/folders.mdc` (без детализации содержимого `multidoc2dial/`).
 
 В схеме укажи путь и одну строку, зачем он нужен. Не оставляй схему старее проекта.

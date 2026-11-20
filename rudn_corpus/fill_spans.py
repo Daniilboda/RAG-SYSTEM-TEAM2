@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Fill spans (+ tables) in rudn_doc.json from doc_text markdown.
+"""Fill spans (+ tables) in file-based rudn_corpus from doc_text markdown.
 
 Span shape matches multidoc2dial/docs/rudn_doc_sketch.json:
   id_sp, tag, start_sp, end_sp, text_sp, title, parent_titles,
@@ -14,11 +14,14 @@ Strategy:
 """
 from __future__ import annotations
 
-import json
-import re
+import sys
 from pathlib import Path
 
-CORPUS_PATH = Path(__file__).parent / "rudn_doc.json"
+import re
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from store import iter_docs, rebuild_catalog, write_doc  # noqa: E402
+
 DOMAIN = "stipendii"
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$", re.M)
@@ -453,11 +456,11 @@ def find_tables(text: str) -> list[dict]:
 
 
 def main() -> None:
-    corpus = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
-    docs = corpus["doc_data"][DOMAIN]
+    docs = iter_docs(DOMAIN)
     total_spans = 0
     total_tables = 0
-    for doc_id, doc in docs.items():
+    for doc in docs:
+        doc_id = doc["doc_id"]
         text = doc["doc_text"]
         if not text.endswith("\n"):
             text += "\n"
@@ -466,15 +469,13 @@ def main() -> None:
         tables = find_tables(text)
         doc["spans"] = spans
         doc["tables"] = tables
+        write_doc(doc, refresh_catalog=False)
         total_spans += len(spans)
         total_tables += len(tables)
         print(f"{doc_id[:55]:55} spans={len(spans):4} tables={len(tables):2}")
 
-    CORPUS_PATH.write_text(
-        json.dumps(corpus, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    print(f"wrote {CORPUS_PATH}")
+    rebuild_catalog()
+    print("wrote rudn_corpus/docs/ + catalog.jsonl")
     print(f"docs={len(docs)} spans_total={total_spans} tables_total={total_tables}")
 
 

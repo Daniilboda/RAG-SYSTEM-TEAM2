@@ -2,8 +2,8 @@
   "schema_version": "k1.v1",
   "adapter_version": "1",
   "snapshot_id": "stipendii_lp_v1",
-  "source_corpus": "rudn_corpus/rudn_doc.json",
-  "source_corpus_sha256": "494809b53371bb673ba2b2506c5aa09f12ecf634dd9ce8ca95d6623e6ba9222b",
+  "source_corpus": "rudn_corpus/catalog.jsonl",
+  "source_corpus_sha256": "c481581a24d9a499bebe56942f79c65a7222e2e33603e35b5c7fa467c7fcea55",
   "domain": "stipendii",
   "document_count": 22,
   "created_at": "2026-10-30T00:00:00Z"
